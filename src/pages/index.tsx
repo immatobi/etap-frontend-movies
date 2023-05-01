@@ -30,6 +30,14 @@ const Home = () => {
             movieContext.getAllMovies(30, 1)
         }
 
+        if(body.isArrayEmpty(movieContext.brands)){
+            movieContext.getBrands()
+        }
+
+        if(body.isArrayEmpty(movieContext.genres)){
+            movieContext.getGenres()
+        }
+
     }, [])
 
     const toggleSearchType = (e: any) => {
@@ -169,14 +177,17 @@ const Home = () => {
                                                 <h3 className='font-satoshimedium onwhite mrgb1 fs-15'>Filter by genres</h3>
 
                                                 <div className='pill-list'>
-                                                    <Link onClick={(e) => toggleFilter(e, 'genre', 'superhero')} href={''} className='pill'>
-                                                        <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>Superhero</span>
-                                                        { filter.genre === 'superhero' && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
-                                                    </Link>
-                                                    <Link onClick={(e) => toggleFilter(e, 'genre', 'action')} href={''} className='pill'>
-                                                        <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>Action</span>
-                                                        { filter.genre === 'action' && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
-                                                    </Link>
+                                                    {
+                                                        movieContext.genres.length > 0 &&
+                                                        movieContext.genres.map((genre, index) => 
+                                                        <>
+                                                            <Link key={index} onClick={(e) => toggleFilter(e, 'genre', genre.name.toLowerCase())} href={''} className='pill'>
+                                                                <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>{ body.captialize(genre.name) }</span>
+                                                                { filter.genre === genre.name.toLowerCase() && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
+                                                            </Link>
+                                                        </>
+                                                        )
+                                                    }
                                                 </div>
 
                                             </div>
@@ -186,19 +197,22 @@ const Home = () => {
                                                 <h3 className='font-satoshimedium onwhite mrgb1 fs-15'>Filter by brands</h3>
 
                                                 <div className='pill-list'>
-                                                    <Link onClick={(e) => toggleFilter(e, 'brand', 'marvel')} href={''} className='pill'>
-                                                        <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>Marvel</span>
-                                                        { filter.brand === 'marvel' && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
-                                                    </Link>
-                                                    <Link onClick={(e) => toggleFilter(e, 'brand', 'dc studio')} href={''} className='pill'>
-                                                        <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>DC Studio</span>
-                                                        { filter.brand === 'dc studio' && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
-                                                    </Link>
+                                                    {
+                                                        movieContext.brands.length > 0 &&
+                                                        movieContext.brands.map((brand, index) => 
+                                                        <>
+                                                            <Link key={index} onClick={(e) => toggleFilter(e, 'brand', brand.name.toLowerCase())} href={''} className='pill'>
+                                                                <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>{ body.captialize(brand.name) }</span>
+                                                                { filter.brand === brand.name.toLowerCase() && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
+                                                            </Link>
+                                                        </>
+                                                        )
+                                                    }
                                                 </div>
 
                                             </div>
 
-                                            <div className='mrgb2'>
+                                            {/* <div className='mrgb2'>
                                                 
                                                 <h3 className='font-satoshimedium onwhite mrgb1 fs-15'>Filter by year</h3>
 
@@ -213,7 +227,7 @@ const Home = () => {
                                                     </Link>
                                                 </div>
 
-                                            </div>
+                                            </div> */}
 
                                             <Link 
                                             href={''} 

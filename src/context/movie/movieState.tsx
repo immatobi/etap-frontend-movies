@@ -19,6 +19,8 @@ import {
     SET_COUNT,
     SET_RESPONSE,
     SET_SEARCH,
+    GET_BRANDS,
+    GET_GENRES,
 } from "../types";
 import { ISearchProps } from '@/utils/types.util';
 
@@ -127,18 +129,16 @@ const MovieState = (props: any) => {
 
     }
 
-    const getBrands = async (limit: number, page: number) => {
-
-        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+    const getBrands = async () => {
 
         setLoading()
             try {
 
-                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies/all?${q}`, storage.getConfig())
+                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies/brands`, storage.getConfig())
                 .then((resp) => {
 
                     dispatch({
-                        type: GET_MOVIES,
+                        type: GET_BRANDS,
                         payload: resp.data.data
                     });
 
@@ -148,7 +148,7 @@ const MovieState = (props: any) => {
                         logout();
                     }else if(err && err.response && err.response.data){
         
-                        console.log(`Error! Could not get movies ${err.response.data}`)
+                        console.log(`Error! Could not get brands ${err.response.data}`)
         
                     }else if(err && err.toString() === 'Error: Network Error'){
         
@@ -156,7 +156,7 @@ const MovieState = (props: any) => {
         
                     }else if(err){
         
-                        console.log(`Error! Could not get movies ${err}`)
+                        console.log(`Error! Could not get brands ${err}`)
         
                     }
 
@@ -172,7 +172,7 @@ const MovieState = (props: any) => {
     
                 }else if(err && err.response && err.response.data){
     
-                    console.log(`Error! Could not get movies ${err.response.data}`)
+                    console.log(`Error! Could not get brands ${err.response.data}`)
     
                 }else if(err && err.toString() === 'Error: Network Error'){
     
@@ -180,7 +180,68 @@ const MovieState = (props: any) => {
     
                 }else if(err){
     
-                    console.log(`Error! Could not get movies ${err}`)
+                    console.log(`Error! Could not get brands ${err}`)
+    
+                }
+                
+            }
+
+        
+
+    }
+
+    const getGenres = async () => {
+
+        setLoading()
+            try {
+
+                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies/genres`, storage.getConfig())
+                .then((resp) => {
+
+                    dispatch({
+                        type: GET_GENRES,
+                        payload: resp.data.data
+                    });
+
+                }).catch((err) => {
+
+                    if(err && err.response && err.response.data && err.response.data.status === 401){
+                        logout();
+                    }else if(err && err.response && err.response.data){
+        
+                        console.log(`Error! Could not get genres ${err.response.data}`)
+        
+                    }else if(err && err.toString() === 'Error: Network Error'){
+        
+                        // loader.popNetwork();
+        
+                    }else if(err){
+        
+                        console.log(`Error! Could not get genres ${err}`)
+        
+                    }
+
+                    unsetLoading();
+                    
+                })
+                
+            } catch (err:any) {
+                
+                if(err && err.response && err.response.data && err.response.data.status === 401){
+
+                    // logout();
+    
+                }else if(err && err.response && err.response.data){
+    
+                    console.log(`Error! Could not get genres ${err.response.data}`)
+    
+                }else if(err && err.toString() === 'Error: Network Error'){
+    
+                    // loader.popNetwork();
+    
+                }else if(err){
+    
+                    console.log(`Error! Could not get genres ${err}`)
     
                 }
                 
@@ -296,6 +357,8 @@ const MovieState = (props: any) => {
     return <MovieContext.Provider
     value={{
         movies: state.movies,
+        brands: state.brands,
+        genres: state.genres,
         search: state.search,
         count: state.count,
         total: state.total,
@@ -303,6 +366,8 @@ const MovieState = (props: any) => {
         response: state.response,
         loading: state.loading,
         getAllMovies,
+        getBrands, 
+        getGenres,
         searchData,
         filterData,
         setSearch,

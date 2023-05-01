@@ -1,5 +1,7 @@
 export interface IMovieContext{
     movies: Array<any>,
+    brands: Array<any>,
+    genres: Array<any>,
     search: {
         error: boolean,
         mesaage: string,
@@ -11,6 +13,8 @@ export interface IMovieContext{
     loading: boolean,
     response: any,
     getAllMovies(limit: number, page: number): void,
+    getBrands(): void,
+    getGenres(): void,
     setSearch({ error, message, data }: Partial<ISearchProps>): void,
     searchData({ type, movie, limit, page }: Partial<ISearchProps>): void,
     filterData({ type, movie, limit, page }: Partial<ISearchProps>): void,

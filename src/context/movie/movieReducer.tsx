@@ -9,6 +9,8 @@ import {
     SET_COUNT,
     SET_RESPONSE,
     SET_SEARCH,
+    GET_BRANDS,
+    GET_GENRES,
 } from "../types";
 
 const reducer = (state: any, action: any) => {
@@ -19,6 +21,18 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 movies: action.payload,
+                loading: false
+            }
+        case GET_BRANDS: 
+            return {
+                ...state,
+                brands: action.payload,
+                loading: false
+            }
+        case GET_GENRES: 
+            return {
+                ...state,
+                genres: action.payload,
                 loading: false
             }
         case SET_SEARCH: 
