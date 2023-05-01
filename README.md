@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-Duplicate the .env.local.example file and supply the env variable.
+Duplicate the `.env.local.example` file and supply the env variable.
 
 Install dependencies
 ```bash
