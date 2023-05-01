@@ -2,6 +2,8 @@ export const GET_LOGGEDIN_USER = 'GET_LOGGEDIN_USER'
 export const GET_USER = 'GET_USER';
 
 export const GET_MOVIES = 'GET_MOVIES';
+export const GET_BRANDS = 'GET_BRANDS';
+export const GET_GENRES = 'GET_GENRES';
 export const SET_SEARCH = 'SET_SEARCH';
 
 export const SET_PAGINATION = 'SET_PAGINATION';

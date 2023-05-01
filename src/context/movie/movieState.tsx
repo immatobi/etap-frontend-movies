@@ -35,6 +35,8 @@ const MovieState = (props: any) => {
 
     const initialState = {
         movies: [],
+        genres: [],
+        brands: [],
         search: {
             error: false,
             message: '',
@@ -63,6 +65,69 @@ const MovieState = (props: any) => {
     }
 
     const getAllMovies = async (limit: number, page: number) => {
+
+        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+
+        setLoading()
+            try {
+
+                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies/all?${q}`, storage.getConfig())
+                .then((resp) => {
+
+                    dispatch({
+                        type: GET_MOVIES,
+                        payload: resp.data.data
+                    });
+
+                }).catch((err) => {
+
+                    if(err && err.response && err.response.data && err.response.data.status === 401){
+                        logout();
+                    }else if(err && err.response && err.response.data){
+        
+                        console.log(`Error! Could not get movies ${err.response.data}`)
+        
+                    }else if(err && err.toString() === 'Error: Network Error'){
+        
+                        // loader.popNetwork();
+        
+                    }else if(err){
+        
+                        console.log(`Error! Could not get movies ${err}`)
+        
+                    }
+
+                    unsetLoading();
+                    
+                })
+                
+            } catch (err:any) {
+                
+                if(err && err.response && err.response.data && err.response.data.status === 401){
+
+                    // logout();
+    
+                }else if(err && err.response && err.response.data){
+    
+                    console.log(`Error! Could not get movies ${err.response.data}`)
+    
+                }else if(err && err.toString() === 'Error: Network Error'){
+    
+                    // loader.popNetwork();
+    
+                }else if(err){
+    
+                    console.log(`Error! Could not get movies ${err}`)
+    
+                }
+                
+            }
+
+        
+
+    }
+
+    const getBrands = async (limit: number, page: number) => {
 
         const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
 
