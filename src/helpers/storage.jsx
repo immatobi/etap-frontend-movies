@@ -6,41 +6,41 @@ storage.setWindow = (w) => {
 }
 
 storage.saveCredentials = (token, id) => {
-    storage.window.localStorage.setItem('token', token);
-    storage.window.localStorage.setItem('userId', id);
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', id);
 }
 
 storage.saveStatus = (status) => {
-    storage.window.localStorage.setItem('status', JSON.stringify(status));
+    localStorage.setItem('status', JSON.stringify(status));
 }
 
 storage.getStatus = () => {
-    return JSON.parse(storage.window.localStorage.getItem('status'));
+    return JSON.parse(localStorage.getItem('status'));
 }
 
 storage.checkToken = () => {
-    return storage.window.localStorage.getItem('token') ? true : false;
+    return localStorage.getItem('token') ? true : false;
 }
 
 storage.getToken = () => {
-    return storage.window.localStorage.getItem('token');
+    return localStorage.getItem('token');
 }
 
 storage.checkUserID = () => {
-    return storage.window.localStorage.getItem('userId') ? true : false;
+    return localStorage.getItem('userId') ? true : false;
 }
 
 storage.getUserID = () => {
-    let uid = storage.window.localStorage.getItem('userId');
+    let uid = localStorage.getItem('userId');
     return uid ? uid : '';
 }
 
 storage.checkUserEmail = () => {
-    return storage.window.localStorage.getItem('userEmail') ? true : false;
+    return localStorage.getItem('userEmail') ? true : false;
 }
 
 storage.getUserEmail = () => {
-    return storage.window.localStorage.getItem('userEmail');
+    return localStorage.getItem('userEmail');
 }
 
 storage.getConfig = () => {
@@ -100,14 +100,14 @@ storage.checkObject = (obj) => {
 storage.clearAuth = () => {
     
     if(storage.checkToken() && storage.checkUserID()){
-        storage.window.localStorage.clear();
+        localStorage.clear();
     }
 }
 
 storage.keep = (key, data) => {
 
     if(data && data !== undefined && data !== null){
-        storage.window.localStorage.setItem(key, JSON.stringify(data));
+        localStorage.setItem(key, JSON.stringify(data));
         return true;
     }else{
         return false
@@ -118,7 +118,7 @@ storage.keep = (key, data) => {
 storage.keepLegacy = (key, data) => {
 
     if(data){
-        storage.window.localStorage.setItem(key, data);
+        localStorage.setItem(key, data);
         return true;
     }else{
         return false
@@ -128,13 +128,13 @@ storage.keepLegacy = (key, data) => {
 
 storage.fetch = (key) => {
 
-    const data = JSON.parse(storage.window.localStorage.getItem(key))
+    const data = JSON.parse(localStorage.getItem(key))
     return data;
 }
 
 storage.fetchLegacy = (key) => {
 
-    const data = storage.window.localStorage.getItem(key);
+    const data = localStorage.getItem(key);
     return data ? data : '';
 }
 
@@ -142,13 +142,13 @@ storage.delete = (key, legacy) => {
     
     let data; 
     if(legacy && legacy === true){
-        data = storage.window.localStorage.getItem(key);
+        data = localStorage.getItem(key);
     }else{
         data = storage.fetch(key);
     }
 
     if(data && data !== null && data !== undefined){
-        storage.window.localStorage.removeItem(key)
+        localStorage.removeItem(key)
         return true;
     }else{
         return false;

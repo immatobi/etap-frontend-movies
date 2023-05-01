@@ -36,6 +36,11 @@ const AuthModal = ({ isShow, closeModal, modalTitle, flattened, stretch, slim, d
         email: '',
         password: '',
     });
+    const [registerData, setRegisterData] = useState({
+        username: '',
+        email: '',
+        password: '',
+    });
 
     const [alert, setAlert] = useState({
         type: '',
@@ -104,8 +109,82 @@ const AuthModal = ({ isShow, closeModal, modalTitle, flattened, stretch, slim, d
                     })
 
                     router.push('/dashboard');
+                    await movieContext.clearDefault()
 
+                }
 
+                setLoading(false);
+
+            }).catch((err) => {
+
+               if(err.response && err.response.data){
+
+                setAlert({ ...alert, type: "danger", show: true, message: err.response.data.message })
+                setTimeout(() => {
+                    setAlert({ ...alert, show: false });
+                }, 2500)
+
+               }
+
+                setLoading(false);
+
+            });
+
+        }
+    }
+
+    const register = async (e: any) => {
+
+        if (e) { e.preventDefault() }
+
+        if (!registerData.email && !registerData.password && !registerData.username) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'All fields are required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!registerData.username) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Username is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (registerData.username.split(' ').length > 1) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Spaces are not allowed in usernames' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!registerData.email) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Email is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!registerData.password) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Password is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else {
+
+            setLoading(true);
+
+            await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, { ...registerData }, storage.getConfig())
+            .then(async (resp) => {
+
+                if (resp.data.error === false && resp.data.status === 200) {
+
+                    storage.saveCredentials(resp.data.token, resp.data.data.id);
+
+                    cookie.set("userType", resp.data.data.userType , {
+                        path: '/',
+                        expires: exp
+                    })
+
+                    cookie.set("token", resp.data.token , {
+                        path: '/',
+                        expires: exp
+                    })
+
+                    router.push('/dashboard');
+                    await movieContext.clearDefault()
                 }
 
                 setLoading(false);
@@ -225,28 +304,113 @@ const AuthModal = ({ isShow, closeModal, modalTitle, flattened, stretch, slim, d
                                                 </>
                                             }
 
-                                    {
-                                        step === 1 &&
-                                        <>
-                                            
-                                            {/* <Message
-                                                title="Successful!"
-                                                displayTitle={false}
-                                                message={'Category saved successfully'}
-                                                action={closeX}
-                                                status="success"
-                                                lottieSize={200}
-                                                loop={false}
-                                                actionType="action"
-                                                buttonText='Okay'
-                                                setBg={false}
-                                                bgColor={'#fefefe'}
-                                                buttonPosition={'inside'}
-                                                slim={false}
-                                            /> */}
+                                            {
+                                                step === 1 &&
+                                                <>
+                                                    
+                                                    {/* <Message
+                                                        title="Successful!"
+                                                        displayTitle={false}
+                                                        message={'Category saved successfully'}
+                                                        action={closeX}
+                                                        status="success"
+                                                        lottieSize={200}
+                                                        loop={false}
+                                                        actionType="action"
+                                                        buttonText='Okay'
+                                                        setBg={false}
+                                                        bgColor={'#fefefe'}
+                                                        buttonPosition={'inside'}
+                                                        slim={false}
+                                                    /> */}
 
-                                        </>
-                                    }
+                                                </>
+                                            }
+
+                                        </TabPanel>
+
+                                        <TabPanel tabIndex={0}>
+
+                                            {
+
+                                                step === 0 &&
+                                                <>
+
+                                                    <Alert type={alert.type} show={alert.show} message={alert.message} />
+
+                                                    <div className='form-row mrgb0 mrgt'>
+                                                        <div className='col'>
+                                                            <label className='mrgb0 font-satoshimedium onwhite fs-13'>Your username</label>
+                                                            <input 
+                                                            defaultValue={''}
+                                                            onChange={(e) => { setRegisterData({ ...registerData, username: e.target.value }) }}
+                                                            className='form-control mlg fs-14 font-satoshi onwhite'
+                                                            placeholder='yourusername'
+                                                            type='email' />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='form-row mrgb0 mrgt'>
+                                                        <div className='col'>
+                                                            <label className='mrgb0 font-satoshimedium onwhite fs-13'>Your email</label>
+                                                            <input 
+                                                            defaultValue={''}
+                                                            onChange={(e) => { setRegisterData({ ...registerData, email: e.target.value }) }}
+                                                            className='form-control mlg fs-14 font-satoshi onwhite'
+                                                            placeholder='you@example.com'
+                                                            type='email' />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='form-row mrgb1'>
+                                                        <div className='col'>
+                                                            <label className='mrgb0 font-satoshimedium onwhite fs-13'>Your password</label>
+                                                            <input 
+                                                            defaultValue={''}
+                                                            onChange={(e) => { setRegisterData({ ...registerData, password: e.target.value }) }}
+                                                            className='form-control mlg fs-14 font-satoshi onwhite'
+                                                            placeholder='Type here'
+                                                            type='password' />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='form-row'>
+                                                        <div className='col'>
+                                                            <Link 
+                                                            href={''} 
+                                                            onClick={(e) => register(e)} 
+                                                            className={`btn md wd-min bgd-red btn-block ${loading ? 'disabled-lt' : ''}`}>
+                                                                { loading ? <span className='gm-loader sm'></span> : <span className='font-satoshibold onwhite fs-14'>Sign Up</span>  }
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+
+
+                                                </>
+                                            }
+
+                                            {
+                                                step === 1 &&
+                                                <>
+                                                    
+                                                    {/* <Message
+                                                        title="Successful!"
+                                                        displayTitle={false}
+                                                        message={'Category saved successfully'}
+                                                        action={closeX}
+                                                        status="success"
+                                                        lottieSize={200}
+                                                        loop={false}
+                                                        actionType="action"
+                                                        buttonText='Okay'
+                                                        setBg={false}
+                                                        bgColor={'#fefefe'}
+                                                        buttonPosition={'inside'}
+                                                        slim={false}
+                                                    /> */}
+
+                                                </>
+                                            }
 
                                         </TabPanel>
 

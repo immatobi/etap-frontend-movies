@@ -6,12 +6,13 @@ import Cookies from 'universal-cookie';
 import { IMovieContext, INavbarProps } from '@/utils/types.util';
 import AuthModal from '../auth/AuthModal';
 import MovieContext from '@/context/movie/movieContext';
+import Axios from 'axios'
+import storage from '@/helpers/storage';
 
 const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbarProps>) => {
 
     const router = useRouter();
     const cookie = new Cookies()
-    const [show, setShow] = useState<boolean>(false)
 
     const movieContext = useContext<IMovieContext>(MovieContext)
 
@@ -19,11 +20,21 @@ const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
         body.fixNav()
     }, [])
 
-    const toggleAuth = (e: any) => {
+
+
+    const logout = async (e: any) => {
 
         if(e) { e.preventDefault() }
-        setShow(!show);
 
+        storage.clearAuth()
+        await localStorage.clear()
+        await cookie.remove('token');
+        await cookie.remove('userType');
+
+        await movieContext.clearDefault()
+
+        router.push('/');
+        await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,{}, storage.getConfig());
     }
 
     return (
@@ -62,14 +73,13 @@ const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
                                 <div id="navbar-collapse" className="navbar-collapse collapse">
                                     {/* left */}
                                     <ul className="nav left-nav navbar-nav pdl2 align-items-center">
-                                        <li className="nav-item link"><Link onClick={(e) => { e.preventDefault(); movieContext.logout(); }} className="nav-link onwhite font-satoshimedium fs-14 tighten-text" href="/dashboard">My Dashboard</Link></li>
+                                        <li className="nav-item link"><Link onClick={(e) => { e.preventDefault(); logout(e); }} className="nav-link onwhite font-satoshimedium fs-14 tighten-text" href="/dashboard">My Dashboard</Link></li>
                                     </ul>
 
                                     {/* Right */}
                                     <ul className="nav navbar-nav right-nav ml-auto align-items-center">
-                                        <li className="nav-item link"><Link href="/" className="nav-link onwhite font-satoshimedium fs-14 tighten-text">Logout</Link></li>
                                         <li className="nav-item">
-                                            <Link className="nav-link nav-btn onwhite font-satoshiblack btn md bgd-red fs-14" href="">Addd Movie</Link>
+                                            <Link onClick={(e) => logout(e)} className="nav-link nav-btn onwhite font-satoshiblack btn md bgd-red fs-14" href="">Logout</Link>
                                         </li>
                                     </ul>
                                     
@@ -83,15 +93,6 @@ const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
                 </div>
             
             </header>
-
-            <AuthModal 
-            isShow={show}
-            closeModal={toggleAuth}
-            modalTitle={'Signup/Signin'}
-            flattened={true}
-            slim='slim'
-            stretch={false}
-            />
 
         </>
     )

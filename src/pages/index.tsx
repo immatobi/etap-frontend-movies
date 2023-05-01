@@ -33,7 +33,7 @@ const Home = () => {
         body.changeBackground('bg-brand-black')
 
         if(body.isArrayEmpty(movieContext.movies)){
-            movieContext.getAllMovies(10, 1)
+            movieContext.getAllMovies(30, 1)
         }
 
         if(body.isArrayEmpty(movieContext.brands)){

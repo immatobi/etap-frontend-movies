@@ -19,7 +19,18 @@ const Navbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
     const toggleAuth = (e: any) => {
 
         if(e) { e.preventDefault() }
-        setShow(!show);
+
+        if(!cookie.get('userType') && !cookie.get('token')){
+            setShow(!show);
+        }else{
+
+            if(cookie.get('userType') && cookie.get('token')){
+                router.push('/dashboard')
+            }
+
+        }
+
+        
 
     }
 

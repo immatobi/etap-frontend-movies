@@ -292,6 +292,8 @@ const Dashboard = () => {
                     movieContext.getBrands()
                     movieContext.getGenres()
 
+                    window.location.reload()
+
                 }
 
                 setLoading(false);
@@ -362,48 +364,6 @@ const Dashboard = () => {
 
                                             <div className='col-md-10 mx-auto'>
 
-                                                <form className='search-box form mrgt2'>
-
-                                                    <div className=''>
-                                                        <h3 className='font-satoshimedium onwhite mrgb0 fs-17'>All movies available</h3>
-                                                    </div>
-
-                                                    <div className='ml-auto d-flex align-items-center'>
-                                                        <div className='search-options d-flex align-items-center'>
-
-                                                            <div className="custom-control custom-radio mt-1">
-                                                                <input value={'title'} onChange={(e) => toggleSearchType(e)} defaultChecked={search.type === 'title' ? true: false} type="radio" className="custom-control-input" id="title" name="search-type" />
-                                                                <label className="custom-control-label font-satoshimedium fs-13" style={{ color: '#C3C2FB' }} htmlFor="title">
-                                                                    <span className='fs-13 ui-relative'>Title</span>
-                                                                </label>
-                                                            </div>
-                                                            <span className='pdl1'></span>
-                                                            <div className="custom-control custom-radio mt-1">
-                                                                <input value={'genre'} onChange={(e) => toggleSearchType(e)} defaultChecked={search.type === 'genre' ? true: false} type="radio" className="custom-control-input" id="genre" name="search-type" />
-                                                                <label className="custom-control-label font-satoshimedium fs-13" style={{ color: '#C3C2FB' }} htmlFor="genre">
-                                                                    <span className='fs-13 ui-relative'>Genre</span>
-                                                                </label>
-                                                            </div>
-
-                                                        </div>
-
-                                                        <div className='search-input d-flex align-items-center'>
-
-                                                            <div className="form-group mrgb0 pdr">
-                                                                <input onChange={(e) => { setSerach({ ...search, key: e.target.value }) }} placeholder={`Search ${search.type} here`} type="text" className='form-control lg fs-14 font-satoshi onwhite' />
-                                                            </div>
-
-                                                            <Link href={''} onClick={(e) => { movieContext.search.data.length > 0 ? clearSearch(e) : searchMovies(e) }} 
-                                                            className={`btn sm wd-min bgd-disable fs-14 ${movieContext.loading ? 'disabled-lt' : ''}`}>
-                                                                { movieContext.loading ? <span className='gm-loader sm'></span> : movieContext.search.data.length > 0 ? <span className='fe fe-x fs-17 onwhite'></span> : <span className='font-satoshimedium onwhite fs-14'>Go</span> }
-                                                            </Link>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </form>
-
                                                 {
                                                     movieContext.search.error === true &&
                                                     <div className='ui-text-right pdr2'>
@@ -443,6 +403,48 @@ const Dashboard = () => {
                                                     {
                                                         movieContext.movies.length > 0 &&
                                                         <>
+
+                                                            <form className='search-box form mrgt2 mrgb2'>
+
+                                                                <div className=''>
+                                                                    <h3 className='font-satoshimedium onwhite mrgb0 fs-17'>All movies available</h3>
+                                                                </div>
+
+                                                                <div className='ml-auto d-flex align-items-center'>
+                                                                    <div className='search-options d-flex align-items-center'>
+
+                                                                        <div className="custom-control custom-radio mt-1">
+                                                                            <input value={'title'} onChange={(e) => toggleSearchType(e)} defaultChecked={search.type === 'title' ? true: false} type="radio" className="custom-control-input" id="title" name="search-type" />
+                                                                            <label className="custom-control-label font-satoshimedium fs-13" style={{ color: '#C3C2FB' }} htmlFor="title">
+                                                                                <span className='fs-13 ui-relative'>Title</span>
+                                                                            </label>
+                                                                        </div>
+                                                                        <span className='pdl1'></span>
+                                                                        <div className="custom-control custom-radio mt-1">
+                                                                            <input value={'genre'} onChange={(e) => toggleSearchType(e)} defaultChecked={search.type === 'genre' ? true: false} type="radio" className="custom-control-input" id="genre" name="search-type" />
+                                                                            <label className="custom-control-label font-satoshimedium fs-13" style={{ color: '#C3C2FB' }} htmlFor="genre">
+                                                                                <span className='fs-13 ui-relative'>Genre</span>
+                                                                            </label>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                    <div className='search-input d-flex align-items-center'>
+
+                                                                        <div className="form-group mrgb0 pdr">
+                                                                            <input onChange={(e) => { setSerach({ ...search, key: e.target.value }) }} placeholder={`Search ${search.type} here`} type="text" className='form-control lg fs-14 font-satoshi onwhite' />
+                                                                        </div>
+
+                                                                        <Link href={''} onClick={(e) => { movieContext.search.data.length > 0 ? clearSearch(e) : searchMovies(e) }} 
+                                                                        className={`btn sm wd-min bgd-disable fs-14 ${movieContext.loading ? 'disabled-lt' : ''}`}>
+                                                                            { movieContext.loading ? <span className='gm-loader sm'></span> : movieContext.search.data.length > 0 ? <span className='fe fe-x fs-17 onwhite'></span> : <span className='font-satoshimedium onwhite fs-14'>Go</span> }
+                                                                        </Link>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </form>
 
                                                             {
                                                                 movieContext.search.data.length > 0 &&

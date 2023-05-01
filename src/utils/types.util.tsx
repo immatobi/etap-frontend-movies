@@ -22,6 +22,7 @@ export interface IMovieContext{
     getBrands(): void,
     getGenres(): void,
     setUserType(type: string): void,
+    clearDefault(): void,
     setSearch({ error, message, data }: Partial<ISearchProps>): void,
     searchData({ type, movie, limit, page }: Partial<ISearchProps>): void,
     filterData({ type, movie, limit, page }: Partial<ISearchProps>): void,

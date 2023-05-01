@@ -63,10 +63,11 @@ const MovieState = (props: any) => {
     const logout = async () => {
 
         storage.clearAuth();
-        localStorage.clear()
+        await localStorage.clear()
+        await cookie.remove('token');
+        await cookie.remove('userType');
+
         router.push('/');
-        cookie.remove('token');
-        cookie.remove('userType');
         await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,{}, storage.getConfig());
     }
 
@@ -640,6 +641,19 @@ const MovieState = (props: any) => {
         return ut
     }
 
+    const clearDefault = () => {
+
+        dispatch({
+            type: GET_MOVIES,
+            payload: []
+        })
+
+        dispatch({
+            type: SET_SEARCH,
+            payload: { error: false, message: '', data: [] }
+        })
+    }
+
     return <MovieContext.Provider
     value={{
         user: state.user,
@@ -658,6 +672,7 @@ const MovieState = (props: any) => {
         getAllMovies,
         getMovies,
         getUserMovies,
+        clearDefault,
         getBrands, 
         getGenres,
         setUserType,
