@@ -19,7 +19,8 @@ const Home = () => {
     const [filter, setFilter] = useState({
         brand: '',
         year: '',
-        genre: ''
+        genre: '',
+        title: ''
     })
 
     useEffect(() => {
@@ -107,7 +108,7 @@ const Home = () => {
         movieContext.filterData({ 
             type: 'title',
             movie: {
-                title: filter.brand,
+                title: filter.title,
                 brand: filter.brand,
                 genre: filter.genre,
                 year: filter.year,
@@ -115,6 +116,12 @@ const Home = () => {
             limit: 20, 
             page: 1 
         })
+    }
+
+    const clearSearch = (e: any) => {
+        if(e) { e.preventDefault() }
+        movieContext.setSearch({ error: false, message: '', data: [] })
+        setFilter({ ...filter, title: '', brand: '', year: '', genre: '' })
     }
 
     return (
@@ -201,9 +208,9 @@ const Home = () => {
                                                         movieContext.brands.length > 0 &&
                                                         movieContext.brands.map((brand, index) => 
                                                         <>
-                                                            <Link key={index} onClick={(e) => toggleFilter(e, 'brand', brand.name.toLowerCase())} href={''} className='pill'>
+                                                            <Link key={index} onClick={(e) => toggleFilter(e, 'brand', brand.name)} href={''} className='pill'>
                                                                 <span className='font-satoshi fs-13' style={{  color: '#9a9fff' }}>{ body.captialize(brand.name) }</span>
-                                                                { filter.brand === brand.name.toLowerCase() && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
+                                                                { filter.brand === brand.name && <span className='fe fe-check fs-12 onwhite ml-auto'></span> }
                                                             </Link>
                                                         </>
                                                         )
@@ -231,8 +238,12 @@ const Home = () => {
 
                                             <Link 
                                             href={''} 
-                                            onClick={(e) => filterMovies(e)} 
-                                            className={`btn sm wd-min bgd-disable font-satoshimedium onwhite fs-12 ${(filter.brand || filter.genre || filter.year) ? '' : 'disabled-lt' }`}>Apply Filter</Link>
+                                            onClick={(e) => { movieContext.search.data.length > 0 ? clearSearch(e) : filterMovies(e) }} 
+                                            className={`btn sm wd-min bgd-disable ${(filter.brand || filter.genre || filter.year) ? '' : 'disabled-lt' }`}>
+
+                                                { movieContext.search.data.length > 0 ? <span className='fe fe-x fs-16 onwhite'></span> : <span className='font-satoshimedium onwhite fs-12'>Apply Filter</span> }
+
+                                            </Link>
 
                                         </form>
 
@@ -276,7 +287,7 @@ const Home = () => {
                                                     <input onChange={(e) => { setSerach({ ...search, key: e.target.value }) }} placeholder={`Search ${search.type} here`} type="text" className='form-control lg fs-14 font-satoshi onwhite' />
                                                 </div>
 
-                                                <Link href={''} onClick={(e) => searchMovies(e)} 
+                                                <Link href={''} onClick={(e) => { movieContext.search.data.length > 0 ? clearSearch(e) : searchMovies(e) }} 
                                                 className={`btn sm wd-min bgd-disable fs-14 ${movieContext.loading ? 'disabled-lt' : ''}`}>
                                                     { movieContext.loading ? <span className='gm-loader sm'></span> : movieContext.search.data.length > 0 ? <span className='fe fe-x fs-17 onwhite'></span> : <span className='font-satoshimedium onwhite fs-14'>Go</span> }
                                                 </Link>
@@ -297,8 +308,9 @@ const Home = () => {
                                     {
                                         movieContext.search.data.length > 0 &&
                                         <div className='search-clear d-flex align-items-center justify-content-center mrgt2'>
-                                            <Link href={''} className='link-round sm' style={{ backgroundColor: '#3d4687' }}>
-                                                <span className='fe fe-x fs-15 onwhite'></span>
+                                            <Link onClick={(e) => clearSearch(e)} href={''} className='mrgb0 d-flex align-items-center'>
+                                                <span className='link-round sm' style={{ backgroundColor: '#3d4687' }}><i className='fe fe-x fs-15 onwhite'></i></span>
+                                                <span className='font-satoshi fs-13 pdl' style={{ color: '#c4cbff' }}>Clear search and/or filter</span>
                                             </Link>
                                         </div>
                                     }
