@@ -144,6 +144,162 @@ const MovieState = (props: any) => {
 
     }
 
+    const getMovies = async (limit: number, page: number) => {
+
+        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+
+        setLoading()
+            try {
+
+                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies?${q}`, storage.getConfigWithBearer())
+                .then((resp) => {
+
+                    dispatch({
+                        type: GET_MOVIES,
+                        payload: resp.data.data
+                    });
+
+                    dispatch({
+                        type: SET_PAGINATION,
+                        payload: resp.data.pagination
+                    })
+    
+                    dispatch({
+                        type: SET_TOTAL,
+                        payload: resp.data.total
+                    });
+    
+                    dispatch({
+                        type: SET_COUNT,
+                        payload: resp.data.count
+                    });
+
+                }).catch((err) => {
+
+                    if(err && err.response && err.response.data && err.response.data.status === 401){
+                        logout();
+                    }else if(err && err.response && err.response.data){
+        
+                        console.log(`Error! Could not get movies ${err.response.data}`)
+        
+                    }else if(err && err.toString() === 'Error: Network Error'){
+        
+                        // loader.popNetwork();
+        
+                    }else if(err){
+        
+                        console.log(`Error! Could not get movies ${err}`)
+        
+                    }
+
+                    unsetLoading();
+                    
+                })
+                
+            } catch (err:any) {
+                
+                if(err && err.response && err.response.data && err.response.data.status === 401){
+
+                    // logout();
+    
+                }else if(err && err.response && err.response.data){
+    
+                    console.log(`Error! Could not get movies ${err.response.data}`)
+    
+                }else if(err && err.toString() === 'Error: Network Error'){
+    
+                    // loader.popNetwork();
+    
+                }else if(err){
+    
+                    console.log(`Error! Could not get movies ${err}`)
+    
+                }
+                
+            }
+
+        
+
+    }
+
+    const getUserMovies = async (limit: number, page: number) => {
+
+        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+
+        setLoading()
+            try {
+
+                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies/user/${storage.getUserID()}?${q}`, storage.getConfigWithBearer())
+                .then((resp) => {
+
+                    dispatch({
+                        type: GET_MOVIES,
+                        payload: resp.data.data
+                    });
+
+                    dispatch({
+                        type: SET_PAGINATION,
+                        payload: resp.data.pagination
+                    })
+    
+                    dispatch({
+                        type: SET_TOTAL,
+                        payload: resp.data.total
+                    });
+    
+                    dispatch({
+                        type: SET_COUNT,
+                        payload: resp.data.count
+                    });
+
+                }).catch((err) => {
+
+                    if(err && err.response && err.response.data && err.response.data.status === 401){
+                        logout();
+                    }else if(err && err.response && err.response.data){
+        
+                        console.log(`Error! Could not get movies ${err.response.data}`)
+        
+                    }else if(err && err.toString() === 'Error: Network Error'){
+        
+                        // loader.popNetwork();
+        
+                    }else if(err){
+        
+                        console.log(`Error! Could not get movies ${err}`)
+        
+                    }
+
+                    unsetLoading();
+                    
+                })
+                
+            } catch (err:any) {
+                
+                if(err && err.response && err.response.data && err.response.data.status === 401){
+
+                    // logout();
+    
+                }else if(err && err.response && err.response.data){
+    
+                    console.log(`Error! Could not get movies ${err.response.data}`)
+    
+                }else if(err && err.toString() === 'Error: Network Error'){
+    
+                    // loader.popNetwork();
+    
+                }else if(err){
+    
+                    console.log(`Error! Could not get movies ${err}`)
+    
+                }
+                
+            }
+
+        
+
+    }
+
     const getBrands = async () => {
 
         setLoading()
@@ -412,6 +568,8 @@ const MovieState = (props: any) => {
         response: state.response,
         loading: state.loading,
         getAllMovies,
+        getMovies,
+        getUserMovies,
         getBrands, 
         getGenres,
         searchData,

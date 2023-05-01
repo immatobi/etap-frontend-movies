@@ -568,6 +568,28 @@ a:active,
   border-top-color: currentColor;
 }
 
+@-webkit-keyframes spin-loader {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-loader {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
 /* form styles */
 form .form-group,
 .form .form-group {
@@ -1007,7 +1029,7 @@ form .icon-input input {
 
 .react-tabs__tab-list{
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .search-box{
@@ -1054,4 +1076,69 @@ form .icon-input input {
 
 .pagination .nextprev{
   margin-left: auto;
+}
+
+/* react-tabs */
+.react-tabs__tab-list {
+  border-bottom: 1px solid #2C2866 !important;
+}
+
+.react-tabs__tab-list {
+  display: flex;
+}
+
+.react-tabs__tab {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  padding: 3px 6px !important;
+  padding-bottom: 12px;
+  background: transparent !important;
+  font-family: "satoshiregular";
+  line-height: 23px;
+  font-size: 14px;
+  margin-right: 1.5rem;
+  color: #B2AFD8 !important;
+}
+
+.react-tabs__tab--selected {
+  border-radius: 0 !important;
+  background: transparent;
+  border-bottom: 3px solid #03BBFF !important;
+  color: #fff !important;
+  font-family: "satoshibold";
+}
+
+.react-tabs__tab:focus {
+  outline: unset !important;
+  border-bottom: 3px solid #03BBFF !important;
+}
+
+.react-tabs__tab:focus:after {
+  background: transparent !important;
+}
+
+.auth-tab .react-tabs__tab-list .react-tabs__tab{
+  width: 48%;
+  text-align: center;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-tab .react-tabs__tab-list .react-tabs__tab{
+  margin: 0 2%;
+}
+
+.auth-tab .react-tabs__tab-list .react-tabs__tab:first-child{
+  margin-left: 0;
+}
+
+.auth-tab .react-tabs__tab-list .react-tabs__tab:last-child{
+  margin-right: 0;
+}
+
+.dboard-tab .react-tabs__tab-list{
+ justify-content: center;
 }

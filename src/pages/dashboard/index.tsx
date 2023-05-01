@@ -1,20 +1,398 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import Link from 'next/link'
 import DashboardLayout from '@/components/layouts/Dashboard'
 
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import storage from '@/helpers/storage';
+import body from '@/helpers/body';
+import MovieContext from '@/context/movie/movieContext';
+import { IMovieContext } from '@/utils/types.util';
+import Movie from '../../components/movies/Movie'
+import MoviePanel from '../../components/movies/MoviePanel'
+
 const Dashboard = () => {
+
+    const movieContext = useContext<IMovieContext>(MovieContext);
+
+    const [animate, setAnimate] = useState(false)
+    const [showPanel, setShowPanel] = useState(false)
+    const [movie, setMovie] = useState<any>({})
+    const [search, setSerach] = useState({
+        key: '',
+        type: 'title'
+    })
+
+    const [filter, setFilter] = useState({
+        brand: '',
+        year: '',
+        genre: '',
+        title: ''
+    })
 
     useEffect(() => {
 
     }, [])
 
+    const configTab = (e:any, val:any) => {
+
+        if(e) { e.preventDefault(); }
+        storage.keepLegacy('dboard-tab', val.toString())
+    }
+
+    const togglePanel = (e: any, d: any, t: string) => {
+        if(e) e.preventDefault();
+
+        if(t === 'open'){
+
+            setShowPanel(!showPanel);
+        
+            setTimeout(() => {
+                setAnimate(!animate);
+            }, 130)
+        }
+
+        if(t === 'close'){
+            setAnimate(!animate);
+        
+            setTimeout(() => {
+                setShowPanel(!showPanel);
+            }, 100)
+        }
+
+        setMovie(d);
+        
+    }
+
+    const toggleSearchType = (e: any) => {
+
+        if(e.target.checked){
+            setSerach({ ...search, key: e.target.value })
+        }
+
+    }
+
+    const searchMovies = (e: any) => {
+
+        if(e){ e.preventDefault() }
+        
+        if(!search.key){
+            movieContext.setSearch({ error: true, message: 'Enter search keyword', data: [] })
+        }else{
+            movieContext.searchData({ 
+                type: search.type, 
+                movie: {
+                    title: search.type === 'title' ? search.key : '',
+                    genre: search.type === 'genre' ? search.key : ''
+                }, 
+                limit: 9999, page: 1 
+            })
+        }
+
+    }
+
+    const toggleFilter = (e: any, type: string, val: string) => {
+
+        if(e){ e.preventDefault() }
+
+        if(type === 'genre'){
+            if(filter.genre === val){
+                setFilter({ ...filter, genre: '' })
+            }else{
+                setFilter({ ...filter, genre: val })
+            }
+        }
+
+        if(type === 'brand'){
+
+            if(filter.brand === val){
+                setFilter({ ...filter, brand: '' })
+            }else{
+                setFilter({ ...filter, brand: val })
+            }
+            
+        }
+
+        if(type === 'year'){
+
+            if(filter.year === val){
+                setFilter({ ...filter, year: '' })
+            }else{
+                setFilter({ ...filter, year: val })
+            }
+        }
+
+    }
+
+    const filterMovies = (e: any) => {
+
+        if(e){ e.preventDefault() }
+        
+        movieContext.filterData({ 
+            type: 'title',
+            movie: {
+                title: filter.title,
+                brand: filter.brand,
+                genre: filter.genre,
+                year: filter.year,
+            }, 
+            limit: 9999, 
+            page: 1 
+        })
+    }
+
+    const clearSearch = (e: any) => {
+        if(e) { e.preventDefault() }
+        movieContext.setSearch({ error: false, message: '', data: [] })
+        setFilter({ ...filter, title: '', brand: '', year: '', genre: '' })
+    }
+
+    const pagiPrev = (e: any) => {
+
+        if (e) { e.preventDefault() }
+        movieContext.getAllMovies(movieContext.pagination.prev.limit, movieContext.pagination.prev.page);
+    }
+
+    const pagiNext = (e: any) => {
+
+        if (e) { e.preventDefault() }
+        console.log(movieContext.pagination)
+        movieContext.getAllMovies(movieContext.pagination.next.limit, movieContext.pagination.next.page);
+    }
+
+    const calculatePage = () => {
+
+        let result: number = 0;
+
+        if(movieContext.pagination && body.isObjectEmpty(movieContext.pagination) === false){
+
+            if(movieContext.pagination.next && !movieContext.pagination.prev){
+                result = movieContext.pagination.next.page - 1;
+            }else if(!movieContext.pagination.next && movieContext.pagination.prev){
+                result = movieContext.pagination.prev.page + 1;
+            }else if(movieContext.pagination.next && movieContext.pagination.prev){
+                result = movieContext.pagination.next.page - 1;
+            }
+
+        }else{
+            result = 1;
+        }
+
+        return result
+
+    }
+
     return (
         <>
             <DashboardLayout pageTitle={''}>
 
-                <section>
-                    Hello
+                <section className='section'>
+
+                    <div className='container'>
+
+                        <div className='ui-text-center mrgt2'>
+                            <h1 className='font-satoshimedium fs-20 onwhite'>Your Dashboard</h1>
+                        </div>
+
+                        <div className='ui-separate'></div>
+
+                        <Tabs className={'dboard-tab'} defaultIndex={0}>
+
+                            <TabList>
+                                <Tab onClick={(e) => { configTab(e, 0); }}>My Movies</Tab>
+                            </TabList>
+
+                            <TabPanel tabIndex={0}>
+
+                                {
+                                    movieContext.loading &&
+                                    <>
+                                        <div className="empty-box xmd" style={{ backgroundColor: '#090724' }}>
+
+                                            <div className="ui-text-center">
+                                                <div className="row">
+                                                    <div className="col-md-10 mx-auto">
+                                                        <span className="gmd-loader"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </>
+                                }
+
+                                {
+                                    !movieContext.loading &&
+                                    <>
+                                    
+                                        <div className='row'>
+
+                                            <div className='col-md-10 mx-auto'>
+
+                                                <form className='search-box form mrgt2'>
+
+                                                    <div className=''>
+                                                        <h3 className='font-satoshimedium onwhite mrgb0 fs-17'>All movies available</h3>
+                                                    </div>
+
+                                                    <div className='ml-auto d-flex align-items-center'>
+                                                        <div className='search-options d-flex align-items-center'>
+
+                                                            <div className="custom-control custom-radio mt-1">
+                                                                <input value={'title'} onChange={(e) => toggleSearchType(e)} defaultChecked={search.type === 'title' ? true: false} type="radio" className="custom-control-input" id="title" name="search-type" />
+                                                                <label className="custom-control-label font-satoshimedium fs-13" style={{ color: '#C3C2FB' }} htmlFor="title">
+                                                                    <span className='fs-13 ui-relative'>Title</span>
+                                                                </label>
+                                                            </div>
+                                                            <span className='pdl1'></span>
+                                                            <div className="custom-control custom-radio mt-1">
+                                                                <input value={'genre'} onChange={(e) => toggleSearchType(e)} defaultChecked={search.type === 'genre' ? true: false} type="radio" className="custom-control-input" id="genre" name="search-type" />
+                                                                <label className="custom-control-label font-satoshimedium fs-13" style={{ color: '#C3C2FB' }} htmlFor="genre">
+                                                                    <span className='fs-13 ui-relative'>Genre</span>
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div className='search-input d-flex align-items-center'>
+
+                                                            <div className="form-group mrgb0 pdr">
+                                                                <input onChange={(e) => { setSerach({ ...search, key: e.target.value }) }} placeholder={`Search ${search.type} here`} type="text" className='form-control lg fs-14 font-satoshi onwhite' />
+                                                            </div>
+
+                                                            <Link href={''} onClick={(e) => { movieContext.search.data.length > 0 ? clearSearch(e) : searchMovies(e) }} 
+                                                            className={`btn sm wd-min bgd-disable fs-14 ${movieContext.loading ? 'disabled-lt' : ''}`}>
+                                                                { movieContext.loading ? <span className='gm-loader sm'></span> : movieContext.search.data.length > 0 ? <span className='fe fe-x fs-17 onwhite'></span> : <span className='font-satoshimedium onwhite fs-14'>Go</span> }
+                                                            </Link>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </form>
+
+                                                {
+                                                    movieContext.search.error === true &&
+                                                    <div className='ui-text-right pdr2'>
+                                                        <span className='onaliz fs-13 font-satoshi'>{ movieContext.search.mesaage }</span>
+                                                    </div>
+                                                }
+
+                                                {
+                                                    movieContext.search.data.length > 0 &&
+                                                    <div className='search-clear d-flex align-items-center justify-content-center mrgt2'>
+                                                        <Link onClick={(e) => clearSearch(e)} href={''} className='mrgb0 d-flex align-items-center'>
+                                                            <span className='link-round sm' style={{ backgroundColor: '#3d4687' }}><i className='fe fe-x fs-15 onwhite'></i></span>
+                                                            <span className='font-satoshi fs-13 pdl' style={{ color: '#c4cbff' }}>Clear search and/or filter</span>
+                                                        </Link>
+                                                    </div>
+                                                }
+
+                                                <div className='movies-box'>
+
+                                                    {
+                                                        movieContext.movies.length <= 0 &&
+                                                        <div className="empty-box xmd" style={{ backgroundColor: '#090724' }}>
+
+                                                            <div className="ui-text-center">
+                                                                <div className="row">
+                                                                    <div className="col-md-10 mx-auto">
+                                                                        <span className="fs-13 onwhite font-satoshi">There are no movies at the moment</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    }
+
+
+
+                                                    {
+                                                        movieContext.movies.length > 0 &&
+                                                        <>
+
+                                                            {
+                                                                movieContext.search.data.length > 0 &&
+                                                                movieContext.search.data.map((movie, index) => 
+                                                                <>
+                                                                
+                                                                    <Movie
+                                                                    key={movie.movieId}
+                                                                    title={movie.title}
+                                                                    brand={movie.brand}
+                                                                    year={movie.year}
+                                                                    genre={movie.genre}
+                                                                    description={movie.description}
+                                                                    thumbnail={movie.thumbnail}
+                                                                    data={movie}
+                                                                    openPanel={togglePanel}
+                                                                    />
+                                                                
+                                                                </>
+                                                                )
+
+                                                            }
+
+                                                            {
+                                                                movieContext.search.data.length <= 0 &&
+                                                                movieContext.movies.map((movie, index) => 
+                                                                <>
+                                                                
+                                                                    <Movie
+                                                                    key={movie.movieId}
+                                                                    title={movie.title}
+                                                                    brand={movie.brand}
+                                                                    year={movie.year}
+                                                                    genre={movie.genre}
+                                                                    description={movie.description}
+                                                                    thumbnail={movie.thumbnail}
+                                                                    data={movie}
+                                                                    openPanel={togglePanel}
+                                                                    />
+                                                                
+                                                                </>
+                                                                )
+
+                                                            }
+                                                        
+                                                        </>
+                                                    }
+
+                                                </div>
+
+                                                <div className='pagination mrgt2 mrgb5'>
+                                                    <h3 className='font-satoshi onwhite mrgb0 fs-13'>Page {calculatePage()}: Showing { movieContext.count } movies out of { movieContext.total } </h3>
+                                                    <div className='nextprev'>
+                                                        <Link onClick={(e) => pagiPrev(e)} href={''} className={`link-round smd bgd-disable onwhite ${movieContext.pagination && movieContext.pagination.prev ? '' : 'disabled-lt'}`}><span className='fe fe-chevron-left onwhite fs-15'></span></Link>
+                                                        <span className='pdl fs-13 font-satoshi pdr onwhite'>--</span>
+                                                        <Link onClick={(e) => pagiNext(e)} href={''} className={`link-round smd bgd-disable onwhite ${movieContext.pagination && movieContext.pagination.next ? '' : 'disabled-lt'}`}><span className='fe fe-chevron-right onwhite fs-15'></span></Link>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </>
+                                }
+
+                            </TabPanel>
+
+
+                        </Tabs>
+
+                    </div>
+
                 </section>
+
+                <MoviePanel
+                show={showPanel}
+                display={'details'}
+                animate={animate}
+                close={togglePanel}
+                data={movie}
+                size={'xmd'}
+                />
 
             </DashboardLayout>
         </>

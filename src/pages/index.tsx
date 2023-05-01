@@ -312,8 +312,7 @@ const Home = () => {
                                         </form>
 
                                     </div>
-
-
+                                    
                                 </div>
 
                                 <div className='col-md-10'>

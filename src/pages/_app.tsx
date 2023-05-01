@@ -15,6 +15,7 @@ import Script from 'next/script'
 import MovieState from '../context/movie/movieState'
 
 function App({ Component, pageProps }: AppProps) {
+
   return (
     <>
       <MovieState>

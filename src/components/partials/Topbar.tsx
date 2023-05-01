@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 import { INavbarProps } from '@/utils/types.util';
 import AuthModal from '../auth/AuthModal';
 
-const Navbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbarProps>) => {
+const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbarProps>) => {
 
     const router = useRouter();
     const cookie = new Cookies()
@@ -59,14 +59,14 @@ const Navbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
                                 <div id="navbar-collapse" className="navbar-collapse collapse">
                                     {/* left */}
                                     <ul className="nav left-nav navbar-nav pdl2 align-items-center">
-                                        {/* <li className="nav-item link"><Link className="nav-link onwhite font-satoshimedium fs-14 tighten-text" href="/">Movies</Link></li> */}
+                                        <li className="nav-item link"><Link className="nav-link onwhite font-satoshimedium fs-14 tighten-text" href="/dashboard">My Dashboard</Link></li>
                                     </ul>
 
                                     {/* Right */}
                                     <ul className="nav navbar-nav right-nav ml-auto align-items-center">
-                                    {/* <li className="nav-item link"><Link href="/login" className="nav-link onwhite font-satoshimedium fs-14 tighten-text">Login</Link></li> */}
+                                        <li className="nav-item link"><Link href="/" className="nav-link onwhite font-satoshimedium fs-14 tighten-text">Logout</Link></li>
                                         <li className="nav-item">
-                                            <Link onClick={(e) => toggleAuth(e)} className="nav-link nav-btn onwhite font-satoshiblack btn md bgd-red fs-14" href="">Addd Movie</Link>
+                                            <Link className="nav-link nav-btn onwhite font-satoshiblack btn md bgd-red fs-14" href="">Addd Movie</Link>
                                         </li>
                                     </ul>
                                     
@@ -95,4 +95,4 @@ const Navbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
 
 }
 
-export default Navbar;
+export default Topbar;

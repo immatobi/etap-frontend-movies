@@ -1,109 +1,84 @@
-// import React, { useEffect} from 'react'
-// import { useNavigate } from 'react-router-dom';
-// import loader from './loader'
-// import Axios from 'axios';
-// import storage from './storage';
-// import Cookies from 'universal-cookie';
+import React, { useEffect, useContext} from 'react'
+import { useRouter } from 'next/router';
+import Axios from 'axios';
+import storage from './storage';
+import body from './body';
+import Cookies from 'universal-cookie';
+import MovieContext from '@/context/movie/movieContext';
+import { IMovieContext } from '@/utils/types.util';
 
-// const logout = async () => {
-//     const cookie = new Cookies();
 
-//     storage.clearAuth();
-//     localStorage.clear();
+const logout = async () => {
+    const cookie = new Cookies();
 
-//     // remove cookies
-//     cookie.remove('token');
-//     cookie.remove('userType');
+    storage.clearAuth();
+    localStorage.clear();
 
-//     await Axios.post(`${process.env.REACT_APP_AUTH_URL}/auth/logout`,{}, storage.getConfig());
-// }
+    // remove cookies
+    cookie.remove('token');
+    cookie.remove('userType');
 
-// const trackCampaign = async (data: any) => {
+    await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,{}, storage.getConfig());
+}
 
-//     const cookie = new Cookies();
-
-//     await Axios.put(`${process.env.REACT_APP_BLOG_URL}/campaigns/track`, { utm: data } , storage.getConfig())
-//     .then((resp) => {
-
-//         if(resp.data.error === false && resp.data.status === 200){
-//             cookie.remove('cpxtr')
-//         }
-
-//     }).catch((err) => {
-//         if (err.response.data.errors.length > 0) {
-
-//         } else {
-            
-//         }
-//     })
-
-// }
-
-// export function useNetworkDetect(){
+export function useNetworkDetect(){
 
     
-//     const toggleNetwork = (e: any) => {
-//         loader.popNetwork()
-//     }
+    const toggleNetwork = (e: any) => {
+        
+    }
 
-//     useEffect(() => {
+    useEffect(() => {
 
-//         window.addEventListener(`offline`, toggleNetwork, false);
-//         window.addEventListener(`online`, () => { }, false);
+        window.addEventListener(`offline`, toggleNetwork, false);
+        window.addEventListener(`online`, () => { }, false);
 
-//     }, [])
+    }, [])
 
-// }
+}
 
-// export const usePageRedirect = (types: Array<string>) => {
+export const usePageRedirect = (types: Array<string>) => {
 
-//     const navigate = useNavigate();
-//     const cookie = new Cookies();
+    const movieContext = useContext<IMovieContext>(MovieContext)
 
-//     const ut = cookie.get("userType");
+    const navigate = useRouter();
+    const cookie = new Cookies();
 
-//     useEffect(() => {
-//         fireRedirect()
-//     }, [])
+    const ut = cookie.get("userType");
 
-//     const fireRedirect = () => {
+    useEffect(() => {
+        fireRedirect()
+    }, [])
 
-//         if(!storage.checkToken() && !storage.checkUserID()){
-//             navigate('/login');
-//             logout()
-//         }else if(ut === '' || ut === undefined || ut === null){
-//             navigate('/login');
-//             logout()
-//         }else if(types.includes(ut) === false){
-//             navigate('/login');
-//             logout()
-//         }
+    const fireRedirect = async () => {
 
-//     }
+        if(!storage.checkToken() && !storage.checkUserID()){
+            navigate.push('/');
+            await logout()
+        }else if(ut === '' || ut === undefined || ut === null){
+            navigate.push('/');
+            await logout()
+        }else if(types.includes(ut) === false){
+            navigate.push('/login');
+            await logout()
+        }else{
 
-// }
+            if(ut === 'superadmin'){
 
-// export const useTrackCampaign = (data: any) => {
-
-//     let ct = 0;
-
-//     useEffect(() => {
-
-//         if(data && data.medium && data.source && data.content && data.campaign){
-//             setTimeout(async () => {
-
-//                 if(ct === 0){
-//                     await trackCampaign(data);
-//                     ct += 1;
-//                 }
+                if(body.isArrayEmpty(movieContext.movies)){
+                    movieContext.getMovies(20, 1)
+                }
                 
-//             }, 200)
+            }else{
 
-//             setTimeout(() => {
-//                 ct = 0;
-//             },1500)
-//         }
+                if(body.isArrayEmpty(movieContext.movies)){
+                    movieContext.getUserMovies(20, 1)
+                }
+                
+            }
 
-//     }, [])
-    
-// }
+        }
+
+    }
+
+}

@@ -13,6 +13,8 @@ export interface IMovieContext{
     loading: boolean,
     response: any,
     getAllMovies(limit: number, page: number): void,
+    getMovies(limit: number, page: number): void,
+    getUserMovies(limit: number, page: number): void,
     getBrands(): void,
     getGenres(): void,
     setSearch({ error, message, data }: Partial<ISearchProps>): void,
@@ -74,4 +76,24 @@ export interface IMovieProps {
     thumbnail: string,
     data: any,
     openPanel(e: any, d: any, t: string): void
+}
+
+export interface IModalProps{
+    isShow: boolean,
+    cover: boolean,
+    closeModal: any, 
+    modalTitle: string | undefined, 
+    flattened: boolean, 
+    stretch: boolean, 
+    slim: string
+}
+
+export interface IAuthModal extends IModalProps{
+    data: any,
+    type: string
+}
+export interface IAlertProps{
+    show: boolean,
+    message: string,
+    type: string
 }
