@@ -7,10 +7,15 @@ import Axios from 'axios'
 import MovieContext from '@/context/movie/movieContext'
 import { IMovieContext } from '@/utils/types.util'
 import Movie from '@/components/movies/Movie'
+import MoviePanel from '@/components/movies/MoviePanel'
 
 const Home = () => {
 
     const movieContext = useContext<IMovieContext>(MovieContext)
+
+    const [animate, setAnimate] = useState(false)
+    const [showPanel, setShowPanel] = useState(false)
+    const [movie, setMovie] = useState<any>({})
     const [search, setSerach] = useState({
         key: '',
         type: 'title'
@@ -40,6 +45,30 @@ const Home = () => {
         }
 
     }, [])
+
+    const togglePanel = (e: any, d: any, t: string) => {
+        if(e) e.preventDefault();
+
+        if(t === 'open'){
+
+            setShowPanel(!showPanel);
+        
+            setTimeout(() => {
+                setAnimate(!animate);
+            }, 130)
+        }
+
+        if(t === 'close'){
+            setAnimate(!animate);
+        
+            setTimeout(() => {
+                setShowPanel(!showPanel);
+            }, 100)
+        }
+
+        setMovie(d);
+        
+    }
 
     const toggleSearchType = (e: any) => {
 
@@ -386,6 +415,8 @@ const Home = () => {
                                                             genre={movie.genre}
                                                             description={movie.description}
                                                             thumbnail={movie.thumbnail}
+                                                            data={movie}
+                                                            openPanel={togglePanel}
                                                             />
                                                         
                                                         </>
@@ -406,6 +437,8 @@ const Home = () => {
                                                             genre={movie.genre}
                                                             description={movie.description}
                                                             thumbnail={movie.thumbnail}
+                                                            data={movie}
+                                                            openPanel={togglePanel}
                                                             />
                                                         
                                                         </>
@@ -419,7 +452,7 @@ const Home = () => {
                                         </div>
 
                                         <div className='pagination'>
-                                            <h3 className='font-satoshi onwhite mrgb0 fs-13'>Page {calculatePage()}: Showing { calculatePage() === 1 ? (movieContext.count - 1) : movieContext.count } movies out of { movieContext.total } </h3>
+                                            <h3 className='font-satoshi onwhite mrgb0 fs-13'>Page {calculatePage()}: Showing { movieContext.count } movies out of { movieContext.total } </h3>
                                             <div className='nextprev'>
                                                 <Link onClick={(e) => pagiPrev(e)} href={''} className={`link-round smd bgd-disable onwhite ${movieContext.pagination && movieContext.pagination.prev ? '' : 'disabled-lt'}`}><span className='fe fe-chevron-left onwhite fs-15'></span></Link>
                                                 <span className='pdl fs-13 font-satoshi pdr onwhite'>--</span>
@@ -439,6 +472,15 @@ const Home = () => {
                 </div>
 
             </section>
+
+            <MoviePanel
+            show={showPanel}
+            display={'details'}
+            animate={animate}
+            close={togglePanel}
+            data={movie}
+            size={'xmd'}
+            />
 
         </>
     )

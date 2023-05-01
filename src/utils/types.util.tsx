@@ -44,6 +44,17 @@ export interface IPagination {
 	prev: { page: number, limit: number },
 }
 
+export interface IPanelBoxProps {
+    title: string,
+    type: string,
+    display: string, 
+    show: boolean, 
+    close: any, 
+    animate: boolean, 
+    data: any,
+    size: string
+}
+
 export interface IDLayoutProps{
     pageTitle: string
 }
@@ -60,5 +71,7 @@ export interface IMovieProps {
     description: string, 
     brand: string,
     year: string,
-    thumbnail: string
+    thumbnail: string,
+    data: any,
+    openPanel(e: any, d: any, t: string): void
 }
