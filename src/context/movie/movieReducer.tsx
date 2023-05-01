@@ -11,11 +11,20 @@ import {
     SET_SEARCH,
     GET_BRANDS,
     GET_GENRES,
+    GET_LOGGEDIN_USER,
+    SET_USERTYPE,
 } from "../types";
 
 const reducer = (state: any, action: any) => {
 
     switch(action.type){
+
+        case GET_LOGGEDIN_USER: 
+            return {
+                ...state,
+                user: action.payload,
+                loading: false
+            }
 
         case GET_MOVIES: 
             return {
@@ -35,6 +44,13 @@ const reducer = (state: any, action: any) => {
                 genres: action.payload,
                 loading: false
             }
+        case SET_USERTYPE: 
+            return {
+                ...state,
+                userType: action.payload,
+                loading: false
+            }
+
         case SET_SEARCH: 
             return {
                 ...state,

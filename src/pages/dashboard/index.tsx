@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext, useState, useRef } from 'react'
 import Link from 'next/link'
 import DashboardLayout from '@/components/layouts/Dashboard'
 
@@ -10,14 +10,24 @@ import MovieContext from '@/context/movie/movieContext';
 import { IMovieContext } from '@/utils/types.util';
 import Movie from '../../components/movies/Movie'
 import MoviePanel from '../../components/movies/MoviePanel'
+import Alert from '@/components/partials/Alert';
+import Axios from 'axios';
+
 
 const Dashboard = () => {
 
+    const imgRef = useRef<any>(null)
+
     const movieContext = useContext<IMovieContext>(MovieContext);
 
+    const [loading, setLoading] = useState<boolean>(false)
     const [animate, setAnimate] = useState(false)
     const [showPanel, setShowPanel] = useState(false)
     const [movie, setMovie] = useState<any>({})
+    const [other, setOther] = useState<any>({
+        genre: '',
+        brand: ''
+    })
     const [search, setSerach] = useState({
         key: '',
         type: 'title'
@@ -30,9 +40,61 @@ const Dashboard = () => {
         title: ''
     })
 
+    const [alert, setAlert] = useState({
+        type: '',
+        show: false,
+        message: ''
+    });
+
+    const [newMovie, setNewMovie] = useState({
+        title: '',
+        genre: '',
+        brand: '',
+        year: '',
+        thumbnail: '',
+        description: ''
+    })
+
     useEffect(() => {
 
     }, [])
+
+    const browseFile = (e: any) => {
+        if (e) { e.preventDefault() }
+
+        if (e.target.files && e.target.files[0]) {
+
+            if (e.target.files[0].size > 5000000) {
+                setAlert({ ...alert, type: "danger", show: true, message: 'file size cannot be greater than 5MB' })
+                setTimeout(() => {
+                    setAlert({ ...alert, show: false })
+                }, 2500);
+            }
+
+            getFileSource(e.target.files[0])
+
+        }
+    }
+
+    const getFileSource = (file: any) => {
+
+        let reader = new FileReader()
+
+        reader.onloadend = (e: any) => {
+
+            setNewMovie({ ...newMovie, thumbnail: e.target.result })
+
+        }
+
+        reader.readAsDataURL(file)
+    }
+
+    const openDialogue = (e: any) => {
+
+        if (e) { e.preventDefault() }
+        
+        imgRef.current.click()
+    }
 
     const configTab = (e:any, val:any) => {
 
@@ -182,6 +244,76 @@ const Dashboard = () => {
 
     }
 
+
+    const addNewMovie = async (e: any) => {
+
+        if (e) { e.preventDefault() }
+
+        if (!newMovie.title && !newMovie.genre && !newMovie.brand && !newMovie.year) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'All fields are required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!newMovie.title ) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Title is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!newMovie.genre ) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Genre is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!newMovie.brand ) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Brand is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        } else if (!newMovie.year ) {
+            setAlert({ ...alert, type: "danger", show: true, message: 'Year is required' })
+            setTimeout(() => {
+                setAlert({ ...alert, show: false });
+            }, 2500)
+        }else {
+
+            setLoading(true);
+
+            await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/movies`, { ...newMovie }, storage.getConfigWithBearer())
+            .then(async (resp) => {
+
+                if (resp.data.error === false && resp.data.status === 200) {
+
+                    if(movieContext.getUserType() === 'superadmin'){
+                        movieContext.getMovies(20, 1)
+                    }else{
+                        movieContext.getUserMovies(20, 1)
+                    }
+
+                    movieContext.getBrands()
+                    movieContext.getGenres()
+
+                }
+
+                setLoading(false);
+
+            }).catch((err) => {
+
+               if(err.response && err.response.data){
+
+                setAlert({ ...alert, type: "danger", show: true, message: err.response.data.message })
+                setTimeout(() => {
+                    setAlert({ ...alert, show: false });
+                }, 2500)
+
+               }
+
+                setLoading(false);
+
+            });
+
+        }
+    }
+
     return (
         <>
             <DashboardLayout pageTitle={''}>
@@ -200,6 +332,7 @@ const Dashboard = () => {
 
                             <TabList>
                                 <Tab onClick={(e) => { configTab(e, 0); }}>My Movies</Tab>
+                                <Tab onClick={(e) => { configTab(e, 1); }}>New Movie</Tab>
                             </TabList>
 
                             <TabPanel tabIndex={0}>
@@ -375,6 +508,141 @@ const Dashboard = () => {
 
                                     </>
                                 }
+
+                            </TabPanel>
+
+                            <TabPanel tabIndex={1}>
+
+                                <form className='form' onSubmit={(e) => { e.preventDefault() }}>
+
+                                    <div className='row mrgt4'>
+
+                                        <div className='col-md-5 mx-auto'>
+
+                                            <Alert type={alert.type} show={alert.show} message={alert.message} />
+
+                                            <div className='movie-banner mrgb1 ui-full-bg-norm ui-bg-center ui-relative' 
+                                            style={{ backgroundImage: `url("${newMovie.thumbnail ? newMovie.thumbnail : '../../../images/assets/movietar.png'}")` }}>
+                                                <input onChange={(e) => browseFile(e)} ref={imgRef} type="file" accept='image/*' className='ui-hide' name="course-cover" id="course-cover" />
+                                                <Link onClick={(e) => openDialogue(e)} href={''} className='link-round smd ui-absolute' style={{ top: '1rem', right: '1rem' }}>
+                                                    <span className='fe fe-edit-2 fs-16 onwhite'></span>
+                                                </Link>
+                                            </div>
+
+                                            <div className='form-row mrgb'>
+                                                <div className='col'>
+                                                    <label className='mrgb0 font-satoshimedium onwhite fs-13'>Movie Title *</label>
+                                                    <input 
+                                                    defaultValue={''}
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, title: e.target.value }) }}
+                                                    className='form-control mlg fs-14 font-satoshi onwhite'
+                                                    placeholder='Ex. Spiderman Far Away From Home'
+                                                    type='text' />
+                                                </div>
+                                            </div>
+
+                                            <label className='mrgb0 font-satoshimedium onwhite fs-13'>Movie Genre *</label>
+                                            <div className='form-row mrgb'>
+                                                <div className='col'>
+                                                    <select 
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, genre: e.target.value }); setOther({ ...other, genre: e.target.value }) }}
+                                                    className='form-control mlg fs-14 font-satoshi onwhite'>
+                                                        <option value={''} selected>Choose Genre</option>
+                                                        {
+                                                            movieContext.genres.length > 0 &&
+                                                            movieContext.genres.map((genre, index) => 
+                                                                <>
+                                                                <option key={genre.id} value={genre.name}>{ body.captialize(genre.name) }</option>
+                                                                </>
+                                                            )
+                                                        }
+                                                        <option value={'other'}>Other</option>
+                                                    </select>
+                                                </div>
+
+                                                <div className={`col ${other.genre === 'other' ? '' : 'disabled'}`}>
+                                                    <input 
+                                                    defaultValue={''}
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, genre: e.target.value }) }}
+                                                    className='form-control mlg fs-14 font-satoshi onwhite'
+                                                    placeholder='Ex. Action'
+                                                    type='text' />
+                                                </div>
+                                            </div>
+
+                                            <label className='mrgb0 font-satoshimedium onwhite fs-13'>Movie Brand *</label>
+                                            <div className='form-row mrgb'>
+                                                <div className='col'>
+                                                    <select 
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, brand: e.target.value });  setOther({ ...other, brand: e.target.value }) }}
+                                                    className='form-control mlg fs-14 font-satoshi onwhite'>
+                                                        <option value={''} selected>Choose Brand</option>
+                                                        {
+                                                            movieContext.brands.length > 0 &&
+                                                            movieContext.brands.map((brand, index) => 
+                                                                <>
+                                                                <option key={brand.id} value={brand.name}>{ body.captialize(brand.name) }</option>
+                                                                </>
+                                                            )
+                                                        }
+                                                        <option value={'other'}>Other</option>
+                                                    </select>
+                                                </div>
+
+                                                <div className={`col ${other.brand === 'other' ? '' : 'disabled'}`}>
+                                                    <input 
+                                                    defaultValue={''}
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, brand: e.target.value }) }}
+                                                    className='form-control mlg fs-14 font-satoshi onwhite'
+                                                    placeholder='Ex. DC Studio'
+                                                    type='text' />
+                                                </div>
+                                            </div>
+
+                                            <div className='form-row mrgb'>
+                                                <div className='col'>
+                                                    <label className='mrgb0 font-satoshimedium onwhite fs-13'>Movie Year *</label>
+                                                    <input 
+                                                    defaultValue={''}
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, year: e.target.value.toString() }) }}
+                                                    className='form-control mlg fs-14 font-satoshi onwhite'
+                                                    placeholder='Ex. 2023'
+                                                    type='number' />
+                                                </div>
+                                            </div>
+
+                                            <div className='form-row mrgb2'>
+                                                <div className='col'>
+                                                    <label className='mrgb0 font-satoshimedium onwhite fs-13'>Movie Description</label>
+                                                    <textarea 
+                                                    defaultValue={''}
+                                                    onChange={(e) => { setNewMovie({ ...newMovie, description: e.target.value }) }}
+                                                    className='form-control xlg fs-14 font-satoshi onwhite'
+                                                    placeholder='Type here' />
+                                                </div>
+                                            </div>
+
+                                            <Alert type={alert.type} show={alert.show} message={alert.message} />
+
+                                            <div className='form-row'>
+                                                <div className='col ui-text-center'>
+                                                    <Link 
+                                                    href={''} 
+                                                    onClick={(e) => addNewMovie(e)} 
+                                                    className={`btn md wd-min bgd-red stretch ${loading ? 'disabled-lt' : ''}`}>
+                                                        { loading ? <span className='gm-loader sm'></span> : <span className='font-satoshibold onwhite fs-14'>Add Movie</span>  }
+                                                    </Link>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </form>
+
+                                <div className='ui-separate'></div>
+                                <div className='ui-separate'></div>
 
                             </TabPanel>
 

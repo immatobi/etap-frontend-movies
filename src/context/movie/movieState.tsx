@@ -23,6 +23,8 @@ import {
     GET_GENRES,
 } from "../types";
 import { ISearchProps } from '@/utils/types.util';
+import { SET_USERTYPE } from '../types';
+import { GET_LOGGEDIN_USER } from '../types';
 
 const MovieState = (props: any) => {
 
@@ -36,6 +38,8 @@ const MovieState = (props: any) => {
     Axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
     const initialState = {
+        user: {},
+        userType: '',
         movies: [],
         genres: [],
         brands: [],
@@ -60,15 +64,76 @@ const MovieState = (props: any) => {
 
         storage.clearAuth();
         localStorage.clear()
-        router.push('/login');
+        router.push('/');
         cookie.remove('token');
         cookie.remove('userType');
         await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,{}, storage.getConfig());
     }
 
+    const getUser = async () => {
+
+        setLoading()
+            try {
+
+                await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/user/${storage.getUserID()}?`, storage.getConfigWithBearer())
+                .then((resp) => {
+
+                    dispatch({
+                        type: GET_LOGGEDIN_USER,
+                        payload: resp.data.data
+                    });
+
+                }).catch((err) => {
+
+                    if(err && err.response && err.response.data && err.response.data.status === 401){
+                        logout();
+                    }else if(err && err.response && err.response.data){
+        
+                        console.log(`Error! Could not get loggedin user ${err.response.data}`)
+        
+                    }else if(err && err.toString() === 'Error: Network Error'){
+        
+                        // loader.popNetwork();
+        
+                    }else if(err){
+        
+                        console.log(`Error! Could not get loggedin user ${err}`)
+        
+                    }
+
+                    unsetLoading();
+                    
+                })
+                
+            } catch (err:any) {
+                
+                if(err && err.response && err.response.data && err.response.data.status === 401){
+
+                    // logout();
+    
+                }else if(err && err.response && err.response.data){
+    
+                    console.log(`Error! Could not get loggedin user ${err.response.data}`)
+    
+                }else if(err && err.toString() === 'Error: Network Error'){
+    
+                    // loader.popNetwork();
+    
+                }else if(err){
+    
+                    console.log(`Error! Could not get loggedin user ${err}`)
+    
+                }
+                
+            }
+
+        
+
+    }
+
     const getAllMovies = async (limit: number, page: number) => {
 
-        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=asc`
 
         setLoading()
             try {
@@ -146,7 +211,7 @@ const MovieState = (props: any) => {
 
     const getMovies = async (limit: number, page: number) => {
 
-        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=asc`
 
         setLoading()
             try {
@@ -224,7 +289,7 @@ const MovieState = (props: any) => {
 
     const getUserMovies = async (limit: number, page: number) => {
 
-        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=desc`
+        const q = `take=${limit && limit !== 0 ? limit : '30'}&page=${page ? page : '1'}&order=asc`
 
         setLoading()
             try {
@@ -556,8 +621,29 @@ const MovieState = (props: any) => {
         })
     }
 
+    const setUserType = (type: string) => {
+        dispatch({
+            type: SET_USERTYPE,
+            payload: type
+        })
+    }
+
+    const getUserType = (): string => {
+
+        const ut = cookie.get('userType')
+
+        dispatch({
+            type: SET_USERTYPE,
+            payload: ut
+        })
+
+        return ut
+    }
+
     return <MovieContext.Provider
     value={{
+        user: state.user,
+        userType: state.userType,
         movies: state.movies,
         brands: state.brands,
         genres: state.genres,
@@ -567,11 +653,14 @@ const MovieState = (props: any) => {
         pagination: state.pagination,
         response: state.response,
         loading: state.loading,
+        getUser,
+        getUserType,
         getAllMovies,
         getMovies,
         getUserMovies,
         getBrands, 
         getGenres,
+        setUserType,
         searchData,
         filterData,
         setSearch,

@@ -61,7 +61,9 @@ export const usePageRedirect = (types: Array<string>) => {
         }else if(types.includes(ut) === false){
             navigate.push('/login');
             await logout()
-        }else{
+        }else if(types.includes(ut) === true){
+
+            movieContext.setUserType(ut);
 
             if(ut === 'superadmin'){
 
@@ -75,6 +77,18 @@ export const usePageRedirect = (types: Array<string>) => {
                     movieContext.getUserMovies(20, 1)
                 }
                 
+            }
+
+            if(body.isObjectEmpty(movieContext.user)){
+                movieContext.getUser()
+            }
+
+            if(body.isArrayEmpty(movieContext.brands)){
+                movieContext.getBrands()
+            }
+
+            if(body.isArrayEmpty(movieContext.genres)){
+                movieContext.getGenres()
             }
 
         }

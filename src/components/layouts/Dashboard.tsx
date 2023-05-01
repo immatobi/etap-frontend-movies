@@ -1,8 +1,9 @@
 import { IDLayoutProps } from '@/utils/types.util';
 import React, { useEffect } from 'react'
-import TopBar from '../partials/TopBar'
+import TopBar from '../partials/Topbar'
 import body from '@/helpers/body';
 import { usePageRedirect } from '@/helpers/hooks';
+import Cookies from 'universal-cookie'
 
 const DashboardLayout = (props: any, { pageTitle }: Partial<IDLayoutProps>) => {
 

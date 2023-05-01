@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import body from '../../helpers/body'
 import Cookies from 'universal-cookie';
-import { INavbarProps } from '@/utils/types.util';
+import { IMovieContext, INavbarProps } from '@/utils/types.util';
 import AuthModal from '../auth/AuthModal';
+import MovieContext from '@/context/movie/movieContext';
 
 const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbarProps>) => {
 
     const router = useRouter();
     const cookie = new Cookies()
     const [show, setShow] = useState<boolean>(false)
+
+    const movieContext = useContext<IMovieContext>(MovieContext)
 
     useEffect(() => {
         body.fixNav()
@@ -59,7 +62,7 @@ const Topbar = ({ isFixed, backgroundColor, doScroll, display }: Partial<INavbar
                                 <div id="navbar-collapse" className="navbar-collapse collapse">
                                     {/* left */}
                                     <ul className="nav left-nav navbar-nav pdl2 align-items-center">
-                                        <li className="nav-item link"><Link className="nav-link onwhite font-satoshimedium fs-14 tighten-text" href="/dashboard">My Dashboard</Link></li>
+                                        <li className="nav-item link"><Link onClick={(e) => { e.preventDefault(); movieContext.logout(); }} className="nav-link onwhite font-satoshimedium fs-14 tighten-text" href="/dashboard">My Dashboard</Link></li>
                                     </ul>
 
                                     {/* Right */}

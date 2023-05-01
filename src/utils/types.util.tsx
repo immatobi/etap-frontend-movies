@@ -1,4 +1,6 @@
 export interface IMovieContext{
+    user: any,
+    userType: string,
     movies: Array<any>,
     brands: Array<any>,
     genres: Array<any>,
@@ -12,11 +14,14 @@ export interface IMovieContext{
     pagination: IPagination,
     loading: boolean,
     response: any,
+    getUser(): void,
+    getUserType(): string,
     getAllMovies(limit: number, page: number): void,
     getMovies(limit: number, page: number): void,
     getUserMovies(limit: number, page: number): void,
     getBrands(): void,
     getGenres(): void,
+    setUserType(type: string): void,
     setSearch({ error, message, data }: Partial<ISearchProps>): void,
     searchData({ type, movie, limit, page }: Partial<ISearchProps>): void,
     filterData({ type, movie, limit, page }: Partial<ISearchProps>): void,
@@ -95,5 +100,9 @@ export interface IAuthModal extends IModalProps{
 export interface IAlertProps{
     show: boolean,
     message: string,
+    type: string
+}
+export interface INewMovieModal extends IModalProps{
+    data: any,
     type: string
 }

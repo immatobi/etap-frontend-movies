@@ -736,6 +736,10 @@ form .icon-input input {
     border-radius: 6px !important;
   }
 
+  .form select.form-control.mlg{
+    min-height: 54px !important;
+  }
+
   .custom-control.custom-checkbox label span,
   .custom-control.custom-checkbox label a{
     position: relative;
