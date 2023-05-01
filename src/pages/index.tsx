@@ -28,7 +28,7 @@ const Home = () => {
         body.changeBackground('bg-brand-black')
 
         if(body.isArrayEmpty(movieContext.movies)){
-            movieContext.getAllMovies(3, 1)
+            movieContext.getAllMovies(10, 1)
         }
 
         if(body.isArrayEmpty(movieContext.brands)){
@@ -62,7 +62,7 @@ const Home = () => {
                     title: search.type === 'title' ? search.key : '',
                     genre: search.type === 'genre' ? search.key : ''
                 }, 
-                limit: 20, page: 1 
+                limit: 9999, page: 1 
             })
         }
 
@@ -113,7 +113,7 @@ const Home = () => {
                 genre: filter.genre,
                 year: filter.year,
             }, 
-            limit: 20, 
+            limit: 9999, 
             page: 1 
         })
     }
@@ -141,7 +141,7 @@ const Home = () => {
 
         let result: number = 0;
 
-        if(movieContext.pagination){
+        if(movieContext.pagination && body.isObjectEmpty(movieContext.pagination) === false){
 
             if(movieContext.pagination.next && !movieContext.pagination.prev){
                 result = movieContext.pagination.next.page - 1;
@@ -155,7 +155,7 @@ const Home = () => {
             result = 1;
         }
 
-        return result.toString()
+        return result
 
     }
 
@@ -419,7 +419,7 @@ const Home = () => {
                                         </div>
 
                                         <div className='pagination'>
-                                            <h3 className='font-satoshi onwhite mrgb0 fs-13'>Page {calculatePage()}: Showing { movieContext.count } movies out of { movieContext.total } </h3>
+                                            <h3 className='font-satoshi onwhite mrgb0 fs-13'>Page {calculatePage()}: Showing { calculatePage() === 1 ? (movieContext.count - 1) : movieContext.count } movies out of { movieContext.total } </h3>
                                             <div className='nextprev'>
                                                 <Link onClick={(e) => pagiPrev(e)} href={''} className={`link-round smd bgd-disable onwhite ${movieContext.pagination && movieContext.pagination.prev ? '' : 'disabled-lt'}`}><span className='fe fe-chevron-left onwhite fs-15'></span></Link>
                                                 <span className='pdl fs-13 font-satoshi pdr onwhite'>--</span>
