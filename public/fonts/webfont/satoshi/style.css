@@ -1,0 +1,121 @@
+@font-face {
+    font-family: 'satoshiblack';
+    src: url('satoshi-black-webfont.woff2') format('woff2'),
+         url('satoshi-black-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshiblack_italic';
+    src: url('satoshi-blackitalic-webfont.woff2') format('woff2'),
+         url('satoshi-blackitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshibold';
+    src: url('satoshi-bold-webfont.woff2') format('woff2'),
+         url('satoshi-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshibold_italic';
+    src: url('satoshi-bolditalic-webfont.woff2') format('woff2'),
+         url('satoshi-bolditalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshiitalic';
+    src: url('satoshi-italic-webfont.woff2') format('woff2'),
+         url('satoshi-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshilight';
+    src: url('satoshi-light-webfont.woff2') format('woff2'),
+         url('satoshi-light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshilight_italic';
+    src: url('satoshi-lightitalic-webfont.woff2') format('woff2'),
+         url('satoshi-lightitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshimedium';
+    src: url('satoshi-medium-webfont.woff2') format('woff2'),
+         url('satoshi-medium-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshimedium_italic';
+    src: url('satoshi-mediumitalic-webfont.woff2') format('woff2'),
+         url('satoshi-mediumitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'satoshiregular';
+    src: url('satoshi-regular-webfont.woff2') format('woff2'),
+         url('satoshi-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+/* definitions */
+.font-satoshi, .font-satoshi a, .font-satoshi span{
+    font-family: 'satoshiregular' !important;
+}
+.font-isatoshi, .font-isatoshi a, .font-isatoshi span{
+    font-family: 'satoshiitalic' !important;
+}
+.font-satoshimedium, .font-satoshimedium a, .font-satoshimedium span{
+    font-family: 'satoshimedium' !important;
+}
+.font-isatoshimedium, .font-isatoshimedium a, .font-isatoshimedium span{
+    font-family: 'satoshimedium_italic' !important;
+}
+.font-satoshilight, .font-satoshilight a, .font-satoshilight span{
+    font-family: 'satoshilight' !important;
+}
+.font-isatoshilight, .font-isatoshilight a, .font-isatoshilight span{
+    font-family: 'satoshilight_italic' !important;
+}
+.font-satoshibold, .font-satoshibold a, .font-satoshibold span{
+    font-family: 'satoshibold' !important;
+}
+.font-isatoshibold, .font-isatoshibold a, .font-isatoshibold span{
+    font-family: 'satoshibold_italic' !important;
+}
+.font-satoshiblack, .font-satoshiblack a, .font-satoshiblack span{
+    font-family: 'satoshiblack' !important;
+}
+.font-isatoshiblack, .font-isatoshiblack a, .font-isatoshiblack span{
+    font-family: 'satoshiblack_italic' !important;
+}
