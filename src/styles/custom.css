@@ -936,3 +936,13 @@ form .icon-input input {
 .pill-list .pill:hover{
   background-color: #171d45;
 }
+
+.pagination{
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.pagination .nextprev{
+  margin-left: auto;
+}

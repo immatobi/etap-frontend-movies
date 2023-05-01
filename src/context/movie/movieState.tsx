@@ -81,6 +81,21 @@ const MovieState = (props: any) => {
                         payload: resp.data.data
                     });
 
+                    dispatch({
+                        type: SET_PAGINATION,
+                        payload: resp.data.pagination
+                    })
+    
+                    dispatch({
+                        type: SET_TOTAL,
+                        payload: resp.data.total
+                    });
+    
+                    dispatch({
+                        type: SET_COUNT,
+                        payload: resp.data.count
+                    });
+
                 }).catch((err) => {
 
                     if(err && err.response && err.response.data && err.response.data.status === 401){
@@ -274,6 +289,22 @@ const MovieState = (props: any) => {
                     type: SET_SEARCH,
                     payload: { error: false, message: 'success', data: resp.data.data }
                 })
+
+                dispatch({
+                    type: SET_PAGINATION,
+                    payload: resp.data.pagination
+                })
+
+                dispatch({
+                    type: SET_TOTAL,
+                    payload: resp.data.total
+                });
+
+                dispatch({
+                    type: SET_COUNT,
+                    payload: resp.data.count
+                });
+
             }
 
             unsetLoading()
@@ -324,6 +355,21 @@ const MovieState = (props: any) => {
                     type: SET_SEARCH,
                     payload: { error: false, message: 'success', data: resp.data.data }
                 })
+
+                dispatch({
+                    type: SET_PAGINATION,
+                    payload: resp.data.pagination
+                })
+
+                dispatch({
+                    type: SET_TOTAL,
+                    payload: resp.data.total
+                });
+
+                dispatch({
+                    type: SET_COUNT,
+                    payload: resp.data.count
+                });
             }
 
             unsetLoading()
